@@ -18,6 +18,12 @@ char keys[KEYPAD_ROWS][KEYPAD_COLS] = {
 
 Keypad keypad = Keypad(makeKeymap(keys), rowPins, colPins, KEYPAD_ROWS, KEYPAD_COLS);
 
+
+#define  LED_YELLOW A5
+#define  LED_GREEN A4
+#define  LED_RED A6
+
+
 char password[] = "3333";
 char clave[4];
 int idx = 0;
@@ -26,7 +32,12 @@ int intentos = 0;
 void setup() {
 
   lcd.begin(16, 2);
-
+  pinMode(LED_YELLOW, OUTPUT);
+  pinMode(LED_GREEN, OUTPUT);
+  pinMode(LED_RED, OUTPUT);
+  digitalWrite(LED_YELLOW, LOW);
+  digitalWrite(LED_GREEN, LOW);
+  digitalWrite(LED_RED, LOW);
   lcd.setCursor(0, 0);
   lcd.print("INGRESE CLAVE: ");
   lcd.setCursor(0, 1);
@@ -47,25 +58,33 @@ void loop() {
         delay(300);
         lcd.clear();
         lcd.setCursor(0, 0);
+        digitalWrite(LED_GREEN, HIGH);
         lcd.print("CLAVE CORRECTA");
       }
       else {
         delay(300);
         lcd.clear();
         lcd.setCursor(0, 0);
+        digitalWrite(LED_YELLOW, HIGH);
         lcd.print("CLAVE INCORRECTA");
         intentos++;
-        delay(300);
+        delay(500);
         lcd.clear();
-        lcd.setCursor(0, 0);
-        if (intentos >= 3) {
-          delay(300);
-          lcd.print("SISTEMA BLOQUEADO");
+        digitalWrite(LED_YELLOW, LOW);
+        if (intentos < 3) {
+          lcd.setCursor(0, 0);
+          lcd.print("INGRESE CLAVE:");
+          lcd.setCursor(0, 1);
         }
-        lcd.print("INGRESE CLAVE:");
-        lcd.setCursor(0, 1);
       }
       idx = 0;
+    }
+    if (intentos >= 3) {
+      delay(300);
+      lcd.clear();
+      lcd.setCursor(0, 0);
+      digitalWrite(LED_RED, HIGH);
+      lcd.print("SISTEMA BLOQUEADO");
     }
   }
 }
